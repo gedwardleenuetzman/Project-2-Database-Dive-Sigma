@@ -30,7 +30,7 @@ public class GUI extends JFrame implements ActionListener {
 
       JOptionPane.showMessageDialog(null, "Opened database successfully");
 
-      String name = "";
+      String name = "ok";
       try {
         //create a statement object
         Statement stmt = conn.createStatement();
