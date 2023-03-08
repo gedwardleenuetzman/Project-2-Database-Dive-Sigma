@@ -9,7 +9,6 @@ import javax.swing.*;
   3) Create a JTextArea object using the queried data
   4) Add the new object to the JPanel p
 */
-
 public class GUI extends JFrame implements ActionListener {
     static JFrame f;
 
@@ -23,9 +22,9 @@ public class GUI extends JFrame implements ActionListener {
         Class.forName("org.postgresql.Driver");
         conn = DriverManager.getConnection("jdbc:postgresql://csce-315-db.engr.tamu.edu/csce315331_sigma", "csce315331_sigma_master", "password");
       } catch (Exception e) {
+        JOptionPane.showMessageDialog(null, "SQL Connection failed. Retry action");
         e.printStackTrace();
-        System.err.println(e.getClass().getName() + ": " + e.getMessage());
-        System.exit(0);
+        System.out.println(e.getClass().getName() + ": " + e.getMessage());
       }
 
       JOptionPane.showMessageDialog(null, "Opened database successfully");
