@@ -7,87 +7,84 @@ import javax.swing.border.*;
 
 import java.util.HashMap;
 
-public class UpdateInventoryGui extends JFrame {
+public class EditProductGui extends JFrame {
+	private JTextField searchBox;
+	private JButton searchButton;
+	private JButton saveButton;
+
+	private JPanel topPanel;
+	private JPanel contentPanel;
+	private JScrollPane contentScroll;
+
 	private HashMap<String, JTextField> inputMap;
 	private HashMap<String, Integer> dataMap;
 
-    public UpdateInventoryGui(ManagerGui managerGui) {
-		setTitle("Chick-fi-la Manager - Update Inventory");
-
+    public EditProductGui(UpdateMenuGui updateMenuGui, String name, Integer id) {
 		inputMap = new HashMap<String, JTextField>();
 		dataMap = new HashMap<String, Integer>();
 
-		setSize(500, 500);
+		setTitle("Chick-fi-la Manager - Update Menu - Edit Product");
+
+		setSize(300, 300);
 		setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
-				managerGui.setVisible(true);
+				updateMenuGui.setVisible(true);
             }
         });
 
-		JPanel topPanel = new JPanel(new BorderLayout());
-		topPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-
-		JPanel contentPanel = new JPanel();
-		contentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-
-		JScrollPane contentScroll = new JScrollPane(contentPanel);
-        contentScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		JPanel searchPanel = new JPanel(new BorderLayout());
+		searchPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
 		JTextField searchBox = new JTextField(20);
-
+		
 		JButton searchButton = new JButton("Search");
 		searchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				generateSearchResults(searchBox.getText(), contentPanel);
+				populateContent();
 			}
 		});
 
 		JButton saveButton = new JButton("Save");
 		saveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				saveUpdates();
+				
 			}
 		});
 
-		topPanel.add(searchBox, BorderLayout.CENTER);
-		topPanel.add(searchButton, BorderLayout.EAST);
-		topPanel.add(saveButton, BorderLayout.WEST);
-
-		add(topPanel, BorderLayout.NORTH);
-		add(contentScroll, BorderLayout.CENTER);
+		JButton removeButton = new JButton("Remove");
+		removeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
 		
-		generateSearchResults("", contentPanel);
+		searchPanel.add(searchBox, BorderLayout.CENTER);
+		searchPanel.add(searchButton, BorderLayout.EAST);
+		searchPanel.add(saveButton, BorderLayout.WEST);
+		searchPanel.add(removeButton, BorderLayout.WEST);
+
+        contentPanel = new JPanel();
+		contentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+
+		contentScroll = new JScrollPane(contentPanel);
+        contentScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+		add(searchPanel, BorderLayout.NORTH);
+		add(contentScroll, BorderLayout.CENTER);
+
+		populateContent();
     }
 
 	public void saveUpdates() {
-		// can do atomic transaction here maybe instead, prolly doesnt matter tho
-		try {
-			Connection conn = DatabaseUtil.makeConnection();
 
-			for (String key : inputMap.keySet()) {
-				JTextField inputBox = inputMap.get(key);
-				Integer quantity = Integer.parseInt(inputBox.getText());
-
-				if (dataMap.get(key) != quantity) {
-					Statement statement = conn.createStatement();
-
-					String query = "UPDATE ingredients SET quantity = " + quantity + " WHERE name = '" + key + "';";
-					statement.executeUpdate(query);
-					
-					dataMap.put(key, quantity);
-				}
-			}
-		} catch(Exception e) {
-			JOptionPane.showMessageDialog(null, "Error accessing Database: " + e.toString());
-		}
 	}
 
-	private void generateSearchResults(String input, JPanel contentPanel) {
+	private void populateContent() {
 		try {
 			dataMap.clear();
 			inputMap.clear();
@@ -96,6 +93,7 @@ public class UpdateInventoryGui extends JFrame {
 			contentPanel.revalidate();
 			contentPanel.repaint();
 
+			String input = searchBox.getText();
 			Connection conn = DatabaseUtil.makeConnection();
 			Statement statement = conn.createStatement();
 
@@ -107,7 +105,7 @@ public class UpdateInventoryGui extends JFrame {
 				query = "SELECT * FROM ingredients WHERE name LIKE '%" + input + "%';";
 			}
 
-        	ResultSet result = statement.executeQuery(query);
+			ResultSet result = statement.executeQuery(query);
 
 			while (result.next()) {
 				String quantity = result.getString("quantity");
