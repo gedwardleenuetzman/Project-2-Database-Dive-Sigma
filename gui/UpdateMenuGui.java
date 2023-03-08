@@ -8,8 +8,8 @@ import javax.swing.border.*;
 import java.util.HashMap;
 
 public class UpdateMenuGui extends JFrame {
-	private JTextField searchBox;
-	private JPanel contentPanel;
+	private SearchPanel searchPanel;
+	private ScrollPanel contentPanel;
 
 	private HashMap<Integer, HashMap<Integer, Integer>> ingredientMap;
 
@@ -31,43 +31,40 @@ public class UpdateMenuGui extends JFrame {
             }
         });
 
+		JPanel mainPanel = new JPanel();
+		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+
 		JPanel topPanel = new JPanel(new BorderLayout());
-		topPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		topPanel.setBorder(new EmptyBorder(5, 5, 0, 5));
+		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
 
-		searchBox = new JTextField(20);
-		JButton searchButton = new JButton("Search");
-
-		topPanel.add(searchBox, BorderLayout.CENTER);
-		topPanel.add(searchButton, BorderLayout.EAST);
-
-		searchButton.addActionListener(new ActionListener() {
+		searchPanel = new SearchPanel();
+		searchPanel.searchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				populateContent();
+				filter();
 			}
 		});
 
-        contentPanel = new JPanel();
-		contentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel = new ScrollPanel();
 
-		JScrollPane contentScroll = new JScrollPane(contentPanel);
-        contentScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		mainPanel.add(topPanel, BorderLayout.NORTH);
+		mainPanel.add(searchPanel, BorderLayout.NORTH);
+		mainPanel.add(contentPanel.scrollPane, BorderLayout.CENTER);
+		add(mainPanel);
 
-		add(topPanel, BorderLayout.NORTH);
-		add(contentScroll, BorderLayout.CENTER);
-
-		populateContent();
+		filter();
     }
 
-	private void populateContent() {
+	public void filter() {
 		try {
+			String input = searchPanel.searchBox.getText();
+
 			ingredientMap.clear();
 
 			contentPanel.removeAll();
 			contentPanel.revalidate();
 			contentPanel.repaint();
-
-			String input = searchBox.getText();
 
 			Connection conn = DatabaseUtil.makeConnection();
 			Statement statement = conn.createStatement();
@@ -84,7 +81,7 @@ public class UpdateMenuGui extends JFrame {
 			UpdateMenuGui self = this;
 
 			while (result.next()) {
-				Integer id = result.getInt("id");
+				String id = result.getString("id");
 				String name = result.getString("name");
 
 				JLabel nameLabel = new JLabel(name);
@@ -93,7 +90,9 @@ public class UpdateMenuGui extends JFrame {
 				editButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						setVisible(false);
-						EditProductGui editProductGui = new EditProductGui(self, name, id);
+						EditProductGui editProductGui = new EditProductGui(self, name, id, false);
+
+						editProductGui.setVisible(true);
 					}
 				});
 
