@@ -119,4 +119,25 @@ public final class DatabaseUtil {
 
 		return map;
 	}
+
+	public static HashMap<String, Integer> getIventoryData(Connection conn) {
+		HashMap<String, Integer> map = new HashMap<String, Integer>();
+
+		try {
+			Statement statement = conn.createStatement();
+			ResultSet result = statement.executeQuery("SELECT * FROM ingredients;");
+
+			while (result.next()) {
+				map.put(result.getString("id"), result.getInt("quantity"));
+			}
+		} catch(Exception e) {
+			JOptionPane.showMessageDialog(null, "SQL Connection failed. Please retry action.");
+			e.printStackTrace();
+			System.out.println(e.getClass().getName() + ": " + e.getMessage());
+
+			System.exit(0);
+		}
+
+		return map;
+	}
 }

@@ -3,32 +3,42 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class ServerGui extends JFrame implements ActionListener {
-	private JButton makeOrderButton;
+	private JButton placeOrderButton;
 
+    private PlaceOrderGui placeOrderGui;
+    
     public ServerGui(LoginGui loginGui) {
-		setTitle("Chick-fil-a Server");
+		super("Chick-fi-la Server");
+
+        placeOrderGui = new PlaceOrderGui(this);
         
         setSize(300, 300);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                setVisible(false);
+                loginGui.setVisible(true);
+            }
+        });
 
-        makeOrderButton = new JButton("Make Order");
-		
+        placeOrderButton = new JButton("Place Order");
+
         JPanel panel = new JPanel();
 
-        panel.add(makeOrderButton);
+        panel.add(placeOrderButton);
 
-        getContentPane().add(panel);
+        add(panel);
 
-        makeOrderButton.addActionListener(this);
+        placeOrderButton.addActionListener(this);
     }
 
     // if button is pressed
     public void actionPerformed(ActionEvent e) {
-        String action = e.getActionCommand();
-
-        if (action.equals("Close")) {
-            
+        if (e.getSource() == placeOrderButton) {
+            setVisible(false);
+            placeOrderGui.setVisible(true);
         }
     }
 }
