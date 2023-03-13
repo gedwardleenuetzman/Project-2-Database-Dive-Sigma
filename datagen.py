@@ -1,5 +1,7 @@
 import random
 
+# this is a comment to test if my ssh authentication is working on my new laptop - Garrison
+
 # Generate random SQL insert statements with sequential order IDs and write to file
 num_inserts = 50
 order_id = 1
