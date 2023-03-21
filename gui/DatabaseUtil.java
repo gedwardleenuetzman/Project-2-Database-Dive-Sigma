@@ -141,7 +141,7 @@ public final class DatabaseUtil {
 		try {
 			ResultSet result = conn.createStatement().executeQuery("SELECT COUNT(*) FROM " + tab + ";");
 			result.next();
-			id = result.getInt(1) * 2;
+			id = result.getInt(1) + 1;
 
 		} catch(Exception e) {
 			JOptionPane.showMessageDialog(null, "SQL Connection failed. Please retry action.");

@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.sql.Timestamp;
 import java.awt.event.*;
 import java.awt.*;
 
@@ -76,11 +77,6 @@ public class PlaceOrderGui extends JFrame {
 
 	public void placeOrder() {
 		try {
-			// id, total price, day, time /orders
-			// order id, prodcut id, quantity /order_products
-			// daily_orders
-			// daily_order_products
-
 			Connection conn = DatabaseUtil.makeConnection();
 			HashMap<String, Integer> inv = DatabaseUtil.getInventoryData(conn);
 			HashMap<String, Integer> using = new HashMap<String, Integer>();
@@ -91,7 +87,7 @@ public class PlaceOrderGui extends JFrame {
 				Integer quantity = Integer.parseInt(inputBox.getText());
 
 				ResultSet ingredients = conn.createStatement().executeQuery("SELECT * FROM product_ingredients WHERE prod_id = " + productId + ";");
-				
+
 				while (ingredients.next()) {
 					String ingredientId = ingredients.getString("item_id");
 
@@ -119,7 +115,36 @@ public class PlaceOrderGui extends JFrame {
 			}
 
 			// update order tables
-			//conn.createStatement().executeUpdate("INSERT INTO orders ();");
+			// id, total price, time /orders
+			// order id, prodcut id, quantity /order_products
+			// daily_orders
+			// daily_order_products
+			{
+				Double total = 0.0;
+
+				String id = Integer.toString(DatabaseUtil.generateTableId(conn, "orders"));
+				String timestamp = (new Timestamp(System.currentTimeMillis())).toString();
+
+				for (String productId : inputMap.keySet()) {
+					JTextField inputBox = inputMap.get(productId);
+					Integer quantity = Integer.parseInt(inputBox.getText());
+
+					if (quantity > 0) {
+						ResultSet product_info = conn.createStatement().executeQuery("SELECT * FROM products_cfa WHERE id = " + productId + " LIMIT 1;");
+
+						product_info.next();
+
+						total += (product_info.getDouble("price") * quantity);
+						
+						conn.createStatement().executeUpdate("INSERT INTO order_products VALUES (" + id + ", " + productId + ", " + quantity + ");");
+						conn.createStatement().executeUpdate("INSERT INTO daily_order_products VALUES (" + id + ", " + productId + ", " + quantity + ");");
+					}
+				}
+
+				conn.createStatement().executeUpdate("INSERT INTO orders VALUES (" + id + ", " + Double.toString(total) + ", '" + timestamp + "');");
+				conn.createStatement().executeUpdate("INSERT INTO daily_orders VALUES (" + id + ", " + Double.toString(total) + ", '" + timestamp + "');");
+			}
+			
 
 			DatabaseUtil.closeConnection(conn);
 		} catch(Exception e) {
