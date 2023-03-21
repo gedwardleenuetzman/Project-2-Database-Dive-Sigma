@@ -4,15 +4,18 @@ import javax.swing.*;
 public class ManagerGui extends JFrame implements ActionListener {
 	private JButton updateMenuButton;
 	private JButton updateInventoryButton;
+    private JButton salesReportButton;
 
     private UpdateInventoryGui updateInventoryGui;
     private UpdateMenuGui updateMenuGui;
-    
+    private SalesReportGui salesReportGui;
+
     public ManagerGui(LoginGui loginGui) {
 		super("Chick-fi-la Manager");
 
         updateInventoryGui = new UpdateInventoryGui(this);
         updateMenuGui = new UpdateMenuGui(this);
+        salesReportGui = new SalesReportGui(this);
         
         setSize(300, 300);
         setLocationRelativeTo(null);
@@ -27,11 +30,13 @@ public class ManagerGui extends JFrame implements ActionListener {
 
         updateInventoryButton = new JButton("Update Inventory");
 		updateMenuButton = new JButton("Update Menu");
-		
+		salesReportButton = new JButton("Sales Report");
+
         JPanel panel = new JPanel();
 
         panel.add(updateInventoryButton);
         panel.add(updateMenuButton);
+        panel.add(salesReportButton);
 
         getContentPane().add(panel);
 
@@ -47,6 +52,9 @@ public class ManagerGui extends JFrame implements ActionListener {
         } else if (e.getSource() == updateMenuButton) {
             setVisible(false);
             updateMenuGui.setVisible(true);
+        } else if (e.getSource() == salesReportButton) {
+            setVisible(false);
+            salesReportGui.setVisible(true);
         }
     }
 }
