@@ -44,8 +44,6 @@ public final class DatabaseUtil {
 		HashMap<String, String> map = new HashMap<String, String>();
 
 		try {
-			
-
 			Statement statement = conn.createStatement();
 			ResultSet result = statement.executeQuery("SELECT * FROM ingredients");
 
@@ -55,8 +53,6 @@ public final class DatabaseUtil {
 
 				map.put(id, name);
 			}
-
-			
 		} catch(Exception e) {
 			JOptionPane.showMessageDialog(null, "SQL Connection failed. Please retry action.");
 			e.printStackTrace();
@@ -73,8 +69,6 @@ public final class DatabaseUtil {
 		HashMap<String, String> map = new HashMap<String, String>();
 
 		try {
-			
-
 			Statement statement = conn.createStatement();
 			ResultSet result = statement.executeQuery("SELECT * FROM ingredients");
 
@@ -120,7 +114,7 @@ public final class DatabaseUtil {
 		return map;
 	}
 
-	public static HashMap<String, Integer> getIventoryData(Connection conn) {
+	public static HashMap<String, Integer> getInventoryData(Connection conn) {
 		HashMap<String, Integer> map = new HashMap<String, Integer>();
 
 		try {
@@ -139,5 +133,24 @@ public final class DatabaseUtil {
 		}
 
 		return map;
+	}
+
+	public static int generateTableId(Connection conn, String tab) {
+		Integer id = -1;
+
+		try {
+			ResultSet result = conn.createStatement().executeQuery("SELECT COUNT(*) FROM " + tab + ";");
+			result.next();
+			id = result.getInt(1) * 2;
+
+		} catch(Exception e) {
+			JOptionPane.showMessageDialog(null, "SQL Connection failed. Please retry action.");
+			e.printStackTrace();
+
+			System.out.println(e.getClass().getName() + ": " + e.getMessage());
+			System.exit(0);
+		}
+		
+		return id;
 	}
 }

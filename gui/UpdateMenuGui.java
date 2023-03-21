@@ -51,8 +51,22 @@ public class UpdateMenuGui extends JFrame {
 		mainPanel.add(topPanel, BorderLayout.NORTH);
 		mainPanel.add(searchPanel, BorderLayout.NORTH);
 		mainPanel.add(contentPanel.scrollPane, BorderLayout.CENTER);
-		add(mainPanel);
 
+		JButton createButton = new JButton("Create");
+		UpdateMenuGui self = this;
+
+		createButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+				EditProductGui editProductGui = new EditProductGui(self, "New menu item", "-1", true);
+
+				editProductGui.setVisible(true);
+			}
+		});
+
+		topPanel.add(createButton);
+		add(mainPanel);
+		
 		filter();
     }
 

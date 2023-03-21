@@ -76,8 +76,13 @@ public class PlaceOrderGui extends JFrame {
 
 	public void placeOrder() {
 		try {
+			// id, total price, day, time /orders
+			// order id, prodcut id, quantity /order_products
+			// daily_orders
+			// daily_order_products
+
 			Connection conn = DatabaseUtil.makeConnection();
-			HashMap<String, Integer> inv = DatabaseUtil.getIventoryData(conn);
+			HashMap<String, Integer> inv = DatabaseUtil.getInventoryData(conn);
 			HashMap<String, Integer> using = new HashMap<String, Integer>();
 			HashMap<String, String> id2name = DatabaseUtil.getIngredientIdToName(conn);
 
@@ -112,6 +117,9 @@ public class PlaceOrderGui extends JFrame {
 				Integer quantity = using.get(ingredientId);
 				conn.createStatement().executeUpdate("UPDATE ingredients SET quantity = quantity - " + quantity + " WHERE id = " + ingredientId);
 			}
+
+			// update order tables
+			//conn.createStatement().executeUpdate("INSERT INTO orders ();");
 
 			DatabaseUtil.closeConnection(conn);
 		} catch(Exception e) {
