@@ -37,6 +37,7 @@ public class ServerGui extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == placeOrderButton) {
             setVisible(false);
+            placeOrderGui.reset();
             placeOrderGui.setVisible(true);
         }
     }

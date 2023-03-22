@@ -104,7 +104,6 @@ public class ExcessInventoryGui extends JFrame {
 
                 System.out.println(name + " inventory " + amountInventory + " sold " + amountSold);
 
-
                 if(percentage < .1){
                     JLabel label = new JLabel(name + " sold " + percentage + "% percent of its inventory : ");
 				

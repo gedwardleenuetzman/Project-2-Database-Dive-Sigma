@@ -14,6 +14,14 @@ public class PlaceOrderGui extends JFrame {
 	private ScrollPanel scrollPanel;
 	ServerGui serverGui;
 
+	public void reset() {
+		for (String productId : inputMap.keySet()) {
+			JTextField inputBox = inputMap.get(productId);
+
+			inputBox.setText("0");			
+		}
+	}
+
     public PlaceOrderGui(ServerGui sg) {
 		try {
 			serverGui = sg;
