@@ -9,6 +9,7 @@ public class ManagerGui extends JFrame implements ActionListener {
     private JButton zReportButton;
     private JButton salesReportButton;
     private JButton excessReportButton;
+    private JButton restockReportButton;
 
     // Setting Class Variables
     private UpdateInventoryGui updateInventoryGui;
@@ -28,7 +29,7 @@ public class ManagerGui extends JFrame implements ActionListener {
         zReportGui = new ZReportGui(this);
         salesReportGui = new SalesReportGui(this);
         excessReportGui = new ExcessReportGui(this);
-        
+
         setSize(300, 300);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -48,6 +49,7 @@ public class ManagerGui extends JFrame implements ActionListener {
 		
 		salesReportButton = new JButton("Sales Report");
         excessReportButton = new JButton("Excess Report");
+        restockReportButton = new JButton("Restock Report");
 
         JPanel panel = new JPanel();
 
@@ -57,6 +59,7 @@ public class ManagerGui extends JFrame implements ActionListener {
         panel.add(zReportButton);
         panel.add(salesReportButton);
         panel.add(excessReportButton);
+        panel.add(restockReportButton);
 
         getContentPane().add(panel);
 
@@ -66,6 +69,7 @@ public class ManagerGui extends JFrame implements ActionListener {
         zReportButton.addActionListener(this);
         salesReportButton.addActionListener(this);
         excessReportButton.addActionListener(this);
+        restockReportButton.addActionListener(this);
     }
 
     // if button is pressed
@@ -88,6 +92,11 @@ public class ManagerGui extends JFrame implements ActionListener {
         } else if (e.getSource() == excessReportButton) {
             setVisible(false);
             excessReportGui.setVisible(true);
+        } else if (e.getSource() == restockReportButton) {
+            setVisible(false);
+            
+            RestockReportGui gui = new RestockReportGui(this);
+            gui.setVisible(true);
         }
     }
 }
