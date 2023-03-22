@@ -29,39 +29,37 @@ public class ZReportGui extends JFrame {
 		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
-		// Float totalValue = 0.0f;
-		// Connection conn = DatabaseUtil.makeConnection();
-		// Statement st = conn.createStatement(); // fill in with col and table name
-		// ResultSet res = st.executeQuery("SELECT SUM(totalprice) FROM daily_orders");
-		// while (res.next()) {
-		// Float c = res.getFloat(1);
-		// totalValue = totalValue + c;
-		// }
+		Float totalDaily = 0.0f;
+		Connection conn = DatabaseUtil.makeConnection();
+		String strQuery = "SELECT SUM(totalprice) FROM daily_orders;";
+		PreparedStatement pst = conn.prepareStatement(strQuery);
+		ResultSet result = pst.executeQuery();
 
-		// String deleteData = "DELETE FROM daily_orders";
-		// String deleteData2 = "DELETE FROM daily_order_products";
-		// PreparedStatement pstmt = conn.prepareStatement(deleteData);
-		// PreparedStatement pstm2 = conn.prepareStatement(deleteData2);
-		// //Statement statement = conn.createStatement();
-		// ResultSet deleted = pstmt.executeQuery();
-		// ResultSet deletedProducts = pstm2.executeQuery();
+		while (result.next()) {
+			Float td = result.getFloat(1);
+			totalDaily = totalDaily + td;
+		}
+		
+		
+		String deleteData1 = "DELETE FROM daily_orders;";
+		String deleteData2 = "DELETE FROM daily_order_products;";
+		PreparedStatement stm1 = conn.prepareStatement(deleteData1);
+		PreparedStatement stm2 = conn.prepareStatement(deleteData2);
+		stm1.executeUpdate();
+		stm2.executeUpdate();
 
 		JPanel panel = new JPanel();
         SpringLayout layout = new SpringLayout();
          
-        JLabel label = new JLabel("Total Daily Sales: ");
-        //JTextField text = new JTextField("Text field", 15);
+        JLabel label = new JLabel("Total Daily Sales: "+ totalDaily);
         panel.setSize(300, 300);
         panel.setLayout(layout);
-        panel.add(label);
-        //panel.add(text);
+        panel.add(label);;
 
 		layout.putConstraint(SpringLayout.WEST, label, 5, SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, label, 5, SpringLayout.NORTH, panel);
-        //layout.putConstraint(SpringLayout.WEST, text, 5, SpringLayout.EAST, label);
-        //layout.putConstraint(SpringLayout.NORTH, text, 5, SpringLayout.NORTH, panel);
 
-		//DatabaseUtil.closeConnection(conn);
+		DatabaseUtil.closeConnection(conn);
 
 		mainPanel.add(panel);
 		add(mainPanel);
@@ -75,3 +73,4 @@ public class ZReportGui extends JFrame {
 		}
     }
 }
+
