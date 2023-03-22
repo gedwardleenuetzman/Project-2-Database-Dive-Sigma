@@ -1,4 +1,3 @@
-import java.sql.*;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -8,6 +7,7 @@ public class ManagerGui extends JFrame implements ActionListener {
 	private JButton updateInventoryButton;
     private JButton xReportButton;
     private JButton zReportButton;
+    private JButton salesReportButton;
 
     // Setting Class Variables
     private UpdateInventoryGui updateInventoryGui;
@@ -15,6 +15,8 @@ public class ManagerGui extends JFrame implements ActionListener {
     private XReportGui xReportGui;
     private ZReportGui zReportGui;
     
+    private SalesReportGui salesReportGui;
+
     public ManagerGui(LoginGui loginGui) {
 		super("Chick-fi-la Manager");
 
@@ -22,6 +24,7 @@ public class ManagerGui extends JFrame implements ActionListener {
         updateMenuGui = new UpdateMenuGui(this);
         xReportGui = new XReportGui(this);
         zReportGui = new ZReportGui(this);
+        salesReportGui = new SalesReportGui(this);
         
         setSize(300, 300);
         setLocationRelativeTo(null);
@@ -40,12 +43,15 @@ public class ManagerGui extends JFrame implements ActionListener {
         zReportButton = new JButton("View Z Report");
         
 		
+		salesReportButton = new JButton("Sales Report");
+
         JPanel panel = new JPanel();
 
         panel.add(updateInventoryButton);
         panel.add(updateMenuButton);
         panel.add(xReportButton);
         panel.add(zReportButton);
+        panel.add(salesReportButton);
 
         getContentPane().add(panel);
 
@@ -53,6 +59,7 @@ public class ManagerGui extends JFrame implements ActionListener {
         updateMenuButton.addActionListener(this);
         xReportButton.addActionListener(this);
         zReportButton.addActionListener(this);
+        salesReportButton.addActionListener(this);
     }
 
     // if button is pressed
@@ -69,6 +76,9 @@ public class ManagerGui extends JFrame implements ActionListener {
         } else if (e.getSource() == xReportButton) {
             setVisible(false);
             xReportGui.setVisible(true);
+        } else if (e.getSource() == salesReportButton) {
+            setVisible(false);
+            salesReportGui.setVisible(true);
         }
     }
 }
