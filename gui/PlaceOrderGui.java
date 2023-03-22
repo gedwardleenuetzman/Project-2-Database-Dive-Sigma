@@ -121,9 +121,7 @@ public class PlaceOrderGui extends JFrame {
 			// daily_order_products
 			{
 				Double total = 0.0;
-
 				String id = Integer.toString(DatabaseUtil.generateTableId(conn, "orders"));
-				String timestamp = (new Timestamp(System.currentTimeMillis())).toString();
 
 				for (String productId : inputMap.keySet()) {
 					JTextField inputBox = inputMap.get(productId);
@@ -141,8 +139,21 @@ public class PlaceOrderGui extends JFrame {
 					}
 				}
 
-				conn.createStatement().executeUpdate("INSERT INTO orders VALUES (" + id + ", " + Double.toString(total) + ", '" + timestamp + "');");
-				conn.createStatement().executeUpdate("INSERT INTO daily_orders VALUES (" + id + ", " + Double.toString(total) + ", '" + timestamp + "');");
+				conn.createStatement().executeUpdate("INSERT INTO orders VALUES (" + id + ", " + Double.toString(total) + ");");
+				conn.createStatement().executeUpdate("INSERT INTO daily_orders VALUES (" + id + ", " + Double.toString(total) + ");");
+
+				String sql1 = "UPDATE orders SET time = ? WHERE id = " + id + ";";
+				String sql2 = "UPDATE daily_orders SET time = ? WHERE id = " + id + ";";
+
+				Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+				PreparedStatement pstmt1 = conn.prepareStatement(sql1);
+				PreparedStatement pstmt2 = conn.prepareStatement(sql2);
+
+				pstmt1.setTimestamp(1, timestamp);
+				pstmt1.executeUpdate();
+
+				pstmt2.setTimestamp(1, timestamp);
+				pstmt2.executeUpdate();
 			}
 			
 

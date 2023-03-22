@@ -42,6 +42,7 @@ public class ManagerGui extends JFrame implements ActionListener {
 
         updateInventoryButton.addActionListener(this);
         updateMenuButton.addActionListener(this);
+        salesReportButton.addActionListener(this);
     }
 
     // if button is pressed
