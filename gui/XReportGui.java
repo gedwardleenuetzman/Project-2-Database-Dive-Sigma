@@ -29,33 +29,30 @@ public class XReportGui extends JFrame {
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
 
-		Float totalValue = 0.0f;
+		Float totalDaily = 0.0f;
 		Connection conn = DatabaseUtil.makeConnection();
-		Statement st = conn.createStatement(); // fill in with col and table name
-		ResultSet daily_orders = st.executeQuery("SELECT SUM(totalprice) FROM daily_orders");
-		while (daily_orders.next()) {
-		Float c = daily_orders.getFloat(1);
-		totalValue = totalValue + c;
+		String strQuery = "SELECT SUM(totalprice) FROM daily_orders";
+		PreparedStatement pst = conn.prepareStatement(strQuery);
+		ResultSet result = pst.executeQuery();
+
+		while (result.next()) {
+			Float td = result.getFloat(1);
+			totalDaily = totalDaily + td;
 		}
 		
 
 		JPanel panel = new JPanel();
         SpringLayout layout = new SpringLayout();
          
-        JLabel label = new JLabel("Total Daily Sales: " + totalValue);
-        //JTextField text = new JTextField("Text field", 15);
+        JLabel label = new JLabel("Total Daily Sales: " + totalDaily);
         panel.setSize(300, 300);
         panel.setLayout(layout);
         panel.add(label);
-        //panel.add(text);
+
 
 		layout.putConstraint(SpringLayout.WEST, label, 5, SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, label, 5, SpringLayout.NORTH, panel);
-        //layout.putConstraint(SpringLayout.WEST, text, 5, SpringLayout.EAST, label);
-        //layout.putConstraint(SpringLayout.NORTH, text, 5, SpringLayout.NORTH, panel);
 
-		daily_orders.close();
-		st.close();
 		DatabaseUtil.closeConnection(conn);
 
 		mainPanel.add(panel);

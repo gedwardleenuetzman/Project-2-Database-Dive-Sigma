@@ -12,8 +12,6 @@ public class ManagerGui extends JFrame implements ActionListener {
     // Setting Class Variables
     private UpdateInventoryGui updateInventoryGui;
     private UpdateMenuGui updateMenuGui;
-    private XReportGui xReportGui;
-    private ZReportGui zReportGui;
     
     private SalesReportGui salesReportGui;
 
@@ -22,8 +20,6 @@ public class ManagerGui extends JFrame implements ActionListener {
 
         updateInventoryGui = new UpdateInventoryGui(this);
         updateMenuGui = new UpdateMenuGui(this);
-        xReportGui = new XReportGui(this);
-        zReportGui = new ZReportGui(this);
         salesReportGui = new SalesReportGui(this);
         
         setSize(300, 300);
@@ -72,10 +68,15 @@ public class ManagerGui extends JFrame implements ActionListener {
             updateMenuGui.setVisible(true);
         } else if (e.getSource() == zReportButton) {
             setVisible(false);
-            zReportGui.setVisible(true);
+            ZReportGui gui = new ZReportGui(this);
+            gui.setVisible(true);
+
         } else if (e.getSource() == xReportButton) {
             setVisible(false);
-            xReportGui.setVisible(true);
+            
+            XReportGui gui = new XReportGui(this);
+            gui.setVisible(true);
+
         } else if (e.getSource() == salesReportButton) {
             setVisible(false);
             salesReportGui.setVisible(true);
