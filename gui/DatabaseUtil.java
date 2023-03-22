@@ -153,4 +153,31 @@ public final class DatabaseUtil {
 		
 		return id;
 	}
+
+	public static HashMap<String, Integer> getRestock(Connection conn) {
+		HashMap<String, Integer> map = new HashMap<String, Integer>();
+
+		try {
+			Statement statement = conn.createStatement();
+			ResultSet result = statement.executeQuery("SELECT * FROM restock_threshold;");
+
+			while (result.next()) {
+				String id = result.getString("ingredient_id");
+				Integer quan = result.getInt("quantity");
+
+				map.put(id, quan);
+			}
+
+			
+		} catch(Exception e) {
+			JOptionPane.showMessageDialog(null, "SQL Connection failed. Please retry action.");
+			e.printStackTrace();
+			System.out.println(e.getClass().getName() + ": " + e.getMessage());
+
+			System.exit(0);
+		}
+
+		return map;
+	}
 }
+ //////////////////////////////////////////////////////////////////////
