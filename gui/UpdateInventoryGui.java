@@ -8,10 +8,17 @@ import javax.swing.border.*;
 import java.util.HashMap;
 
 public class UpdateInventoryGui extends JFrame {
-	private IngredientPanel ingredientPanel;
+	private SearchPanel searchPanel;
+	private ScrollPanel contentPanel;
+
+	private HashMap<Integer, HashMap<Integer, Integer>> ingredientMap;
+
+	//private EditProductGui currentEditProductGui;
 
     public UpdateInventoryGui(ManagerGui managerGui) {
-		setTitle("Chick-fi-la Manager - Update Inventory");
+		setTitle("Chick-fi-la Manager - Update Menu");
+
+		ingredientMap = new HashMap<Integer, HashMap<Integer, Integer>>();
 
 		setSize(500, 500);
 		setLocationRelativeTo(null);
@@ -32,43 +39,95 @@ public class UpdateInventoryGui extends JFrame {
 		topPanel.setBorder(new EmptyBorder(5, 5, 0, 5));
 		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
 
-		JButton saveButton = new JButton("Save");
-		
-		saveButton.addActionListener(new ActionListener() {
+		searchPanel = new SearchPanel();
+		searchPanel.searchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				saveUpdates();
+				filter();
 			}
 		});
 
-		topPanel.add(saveButton);
+        contentPanel = new ScrollPanel();
 
-		ingredientPanel = new IngredientPanel();
+		mainPanel.add(topPanel, BorderLayout.NORTH);
+		mainPanel.add(searchPanel, BorderLayout.NORTH);
+		mainPanel.add(contentPanel.scrollPane, BorderLayout.CENTER);
 
-		mainPanel.add(topPanel);
-		mainPanel.add(ingredientPanel);
+		JButton createButton = new JButton("Create");
+		UpdateInventoryGui self = this;
+
+		createButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+				EditIngredientGui editIngredientGui = new EditIngredientGui(self, "New inventory item", "-1", true);
+
+				editIngredientGui.setVisible(true);
+			}
+		});
+
+		topPanel.add(createButton);
 		add(mainPanel);
+
+		filter();
     }
 
-	public void saveUpdates() {
+	public void filter() {
 		try {
+			String input = searchPanel.searchBox.getText();
+
+			ingredientMap.clear();
+
+			contentPanel.removeAll();
+			contentPanel.revalidate();
+			contentPanel.repaint();
+
 			Connection conn = DatabaseUtil.makeConnection();
+			Statement statement = conn.createStatement();
 
-			for (String key : ingredientPanel.inputMap.keySet()) {
-				JTextField inputBox = ingredientPanel.inputMap.get(key);
-				Integer quantity = Integer.parseInt(inputBox.getText());
+			String query;
 
-				if (ingredientPanel.dataMap.get(key) != quantity) {
-					Statement statement = conn.createStatement();
+			if (input.equals("")) {
+				query = "SELECT * FROM ingredients;";
+			} else {
+				query = "SELECT * FROM ingredients WHERE name LIKE '%" + input + "%';";
+			}
 
-					String query = "UPDATE ingredients SET quantity = " + quantity + " WHERE name = '" + key + "';";
-					statement.executeUpdate(query);
-					
-					ingredientPanel.dataMap.put(key, quantity);
-				}
+        	ResultSet result = statement.executeQuery(query);
+			UpdateInventoryGui self = this;
+
+			while (result.next()) {
+				String id = result.getString("id");
+				String name = result.getString("name");
+				String quantity = result.getString("quantity");
+
+				JLabel nameLabel = new JLabel(name + ": " + quantity);
+				JButton editButton = new JButton("Edit");
+
+				editButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						setVisible(false);
+						EditIngredientGui editIngredientGui = new EditIngredientGui(self, name, id, false);
+
+						editIngredientGui.setVisible(true);
+					}
+				});
+
+				JPanel holder = new JPanel(new BorderLayout());
+				holder.setBorder(new EmptyBorder(5, 5, 5, 5));
+				holder.setLayout(new BoxLayout(holder, BoxLayout.X_AXIS));
+				holder.setPreferredSize(new Dimension(holder.getPreferredSize().width, 40));
+				holder.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+
+				JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+				buttonPanel.add(editButton);
+
+				holder.add(nameLabel, BorderLayout.WEST);
+				holder.add(buttonPanel, BorderLayout.EAST);
+
+				contentPanel.add(holder);
 			}
 
 			DatabaseUtil.closeConnection(conn);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Error accessing Database: " + e.toString());
 		}
 	}
