@@ -125,7 +125,8 @@ public class EditIngredientGui extends JFrame {
 
 			conn.createStatement().executeUpdate("DELETE FROM ingredients WHERE id = " + productId + ";");
 			conn.createStatement().executeUpdate("INSERT INTO ingredients (id, name, quantity) VALUES (" + productId + ", '" + nameLabeledFieldPanel.fieldBox.getText() + "', " + Integer.parseInt(quantityLabeledFieldPanel.fieldBox.getText()) + ");");
-
+			conn.createStatement().executeUpdate("INSERT INTO restock_threshold (ingredient_id, quantity) VALUES (" + productId + ", 1000);");
+			
 			DatabaseUtil.closeConnection(conn);
 
 		} catch(Exception e) {
