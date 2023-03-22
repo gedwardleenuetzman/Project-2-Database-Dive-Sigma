@@ -11,9 +11,10 @@ public class ZReportGui extends JFrame {
 	private IngredientPanel ingredientPanel;
 
     public ZReportGui(ManagerGui managerGui) {
-		setTitle("Chick-fi-la Manager - Update Inventory");
+		try {
+		setTitle("Chick-fi-la Manager - Z Report");
 
-		setSize(500, 500);
+		setSize(500, 300);
 		setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
@@ -28,48 +29,49 @@ public class ZReportGui extends JFrame {
 		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
-		JPanel topPanel = new JPanel(new BorderLayout());
-		topPanel.setBorder(new EmptyBorder(5, 5, 0, 5));
-		topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
+		// Float totalValue = 0.0f;
+		// Connection conn = DatabaseUtil.makeConnection();
+		// Statement st = conn.createStatement(); // fill in with col and table name
+		// ResultSet res = st.executeQuery("SELECT SUM(totalprice) FROM daily_orders");
+		// while (res.next()) {
+		// Float c = res.getFloat(1);
+		// totalValue = totalValue + c;
+		// }
 
-		JButton saveButton = new JButton("Save");
-		
-		saveButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				saveUpdates();
-			}
-		});
+		// String deleteData = "DELETE FROM daily_orders";
+		// String deleteData2 = "DELETE FROM daily_order_products";
+		// PreparedStatement pstmt = conn.prepareStatement(deleteData);
+		// PreparedStatement pstm2 = conn.prepareStatement(deleteData2);
+		// //Statement statement = conn.createStatement();
+		// ResultSet deleted = pstmt.executeQuery();
+		// ResultSet deletedProducts = pstm2.executeQuery();
 
-		topPanel.add(saveButton);
+		JPanel panel = new JPanel();
+        SpringLayout layout = new SpringLayout();
+         
+        JLabel label = new JLabel("Total Daily Sales: ");
+        //JTextField text = new JTextField("Text field", 15);
+        panel.setSize(300, 300);
+        panel.setLayout(layout);
+        panel.add(label);
+        //panel.add(text);
 
-		ingredientPanel = new IngredientPanel();
+		layout.putConstraint(SpringLayout.WEST, label, 5, SpringLayout.WEST, panel);
+        layout.putConstraint(SpringLayout.NORTH, label, 5, SpringLayout.NORTH, panel);
+        //layout.putConstraint(SpringLayout.WEST, text, 5, SpringLayout.EAST, label);
+        //layout.putConstraint(SpringLayout.NORTH, text, 5, SpringLayout.NORTH, panel);
 
-		mainPanel.add(topPanel);
-		mainPanel.add(ingredientPanel);
+		//DatabaseUtil.closeConnection(conn);
+
+		mainPanel.add(panel);
 		add(mainPanel);
-    }
 
-	public void saveUpdates() {
-		try {
-			Connection conn = DatabaseUtil.makeConnection();
-
-			for (String key : ingredientPanel.inputMap.keySet()) {
-				JTextField inputBox = ingredientPanel.inputMap.get(key);
-				Integer quantity = Integer.parseInt(inputBox.getText());
-
-				if (ingredientPanel.dataMap.get(key) != quantity) {
-					Statement statement = conn.createStatement();
-
-					String query = "UPDATE ingredients SET quantity = " + quantity + " WHERE name = '" + key + "';";
-					statement.executeUpdate(query);
-					
-					ingredientPanel.dataMap.put(key, quantity);
-				}
-			}
-
-			DatabaseUtil.closeConnection(conn);
 		} catch(Exception e) {
-			JOptionPane.showMessageDialog(null, "Error accessing Database: " + e.toString());
+			JOptionPane.showMessageDialog(null, "SQL Connection failed. Please retry action.");
+			e.printStackTrace();
+			System.out.println(e.getClass().getName() + ": " + e.getMessage());
+
+			System.exit(0);
 		}
-	}
+    }
 }
