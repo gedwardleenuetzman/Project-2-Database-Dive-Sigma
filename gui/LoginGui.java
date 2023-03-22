@@ -1,16 +1,7 @@
 import javax.swing.*;
-import java.sql.*;
-import java.awt.*;
 import java.awt.event.*;
 
 public class LoginGui extends JFrame {
-    private JButton loginButton;
-    private JTextField inputBox;
-    private Connection conn;
-    
-    private ServerGui serverGui;
-    private ManagerGui managerGui;
-
     public LoginGui() {
         setTitle("Chick Fi La Login");
 

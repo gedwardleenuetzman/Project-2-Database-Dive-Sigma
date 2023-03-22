@@ -9,11 +9,9 @@ import java.util.HashMap;
 
 public class EditProductGui extends JFrame {
 	private HashMap<String, JTextField> inputMap;
-	private HashMap<String, String> dataMap;
 
 	private ScrollPanel scrollPanel;
 	private String productId;
-	private String productName;
 
 	UpdateMenuGui updateMenuGui;
 	LabeledFieldPanel nameLabeledFieldPanel;
@@ -22,10 +20,7 @@ public class EditProductGui extends JFrame {
     public EditProductGui(UpdateMenuGui umg, String name, String prod_id, Boolean makeNew) {
 		try {
 			productId = prod_id;
-			productName = name;
-
 			updateMenuGui = umg;
-
 			inputMap = new HashMap<String, JTextField>();
 
 			if (makeNew) {
@@ -57,61 +52,58 @@ public class EditProductGui extends JFrame {
 			JButton saveButton = new JButton("Save");
 			saveButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					saveUpdates();
-				}
-			});
-
-			JButton newButton = new JButton("Create");
-			newButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					try {	
-						Connection conn = DatabaseUtil.makeConnection();
-
-						ResultSet result = conn.createStatement().executeQuery("SELECT COUNT(*) FROM products_cfa;");
-						result.next();
-
-						productId = Integer.toString(result.getInt(1) * 2);
-
-						DatabaseUtil.closeConnection(conn);
-
+					if (!makeNew) {
 						saveUpdates();
-					} catch(Exception exc) {
-						JOptionPane.showMessageDialog(null, "Error accessing Database: " + e.toString());
+					} else {
+						try {	
+							Connection conn = DatabaseUtil.makeConnection();
+
+							ResultSet result = conn.createStatement().executeQuery("SELECT COUNT(*) FROM products_cfa;");
+							result.next();
+
+							productId = Integer.toString(result.getInt(1) * 2);
+
+							DatabaseUtil.closeConnection(conn);
+
+							saveUpdates();
+						} catch(Exception exc) {
+							JOptionPane.showMessageDialog(null, "Error accessing Database: " + e.toString());
+						}
 					}
+					
 				}
 			});
-
-			JButton removeButton = new JButton("Remove");
-			removeButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete " + name, "Confirmation", JOptionPane.YES_NO_OPTION);
-
-					if (result != JOptionPane.YES_OPTION) {
-						return;
-					}		
-
-					try {	
-						Connection conn = DatabaseUtil.makeConnection();
-						Statement statement = conn.createStatement();
-
-						statement.executeUpdate("DELETE FROM products_cfa WHERE id = " + prod_id + ";");
-						statement.executeUpdate("DELETE FROM product_ingredients WHERE prod_id = " + prod_id + ";");
-
-						DatabaseUtil.closeConnection(conn);
-					} catch(Exception exc) {
-						JOptionPane.showMessageDialog(null, "Error accessing Database: " + e.toString());
-					}
-
-					updateMenuGui.filter();
-					dispose();
-					updateMenuGui.setVisible(true);
-				}
-			});
-
 			topPanel.add(saveButton, BorderLayout.WEST);
-			topPanel.add(newButton, BorderLayout.WEST);
 
 			if (!makeNew) {
+				JButton removeButton = new JButton("Remove");
+
+				removeButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete " + name, "Confirmation", JOptionPane.YES_NO_OPTION);
+
+						if (result != JOptionPane.YES_OPTION) {
+							return;
+						}		
+
+						try {	
+							Connection conn = DatabaseUtil.makeConnection();
+							Statement statement = conn.createStatement();
+
+							statement.executeUpdate("DELETE FROM products_cfa WHERE id = " + prod_id + ";");
+							statement.executeUpdate("DELETE FROM product_ingredients WHERE prod_id = " + prod_id + ";");
+
+							DatabaseUtil.closeConnection(conn);
+						} catch(Exception exc) {
+							JOptionPane.showMessageDialog(null, "Error accessing Database: " + e.toString());
+						}
+
+						updateMenuGui.filter();
+						dispose();
+						updateMenuGui.setVisible(true);
+					}
+				});
+
 				topPanel.add(removeButton, BorderLayout.EAST);
 			}
 
@@ -122,7 +114,7 @@ public class EditProductGui extends JFrame {
 			result.next();
 
 			nameLabeledFieldPanel = new LabeledFieldPanel("Name", name);
-			costLabeledFieldPanel = new LabeledFieldPanel("Price", result.getString("price"));
+			costLabeledFieldPanel = new LabeledFieldPanel("Price", makeNew ? "0" : result.getString("price"));
 
 			scrollPanel = new ScrollPanel();
 
