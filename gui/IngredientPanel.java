@@ -7,7 +7,11 @@ import javax.swing.border.*;
 
 import java.util.HashMap;
 
+/**
+ * Provides a panel to be used by the manager for each ingredient
+ */
 public class IngredientPanel extends JPanel {
+
 	public HashMap<String, JTextField> inputMap;
 	public HashMap<String, Integer> dataMap;
 
@@ -32,10 +36,13 @@ public class IngredientPanel extends JPanel {
 
 		add(searchPanel, BorderLayout.NORTH);
 		add(scrollPanel.scrollPane, BorderLayout.CENTER);
-		
+
 		filter("");
 	}
 
+	/**
+	 * @param input depending on the string , it will filter the word
+	 */
 	public void filter(String input) {
 		try {
 			dataMap.clear();
@@ -56,7 +63,7 @@ public class IngredientPanel extends JPanel {
 				query = "SELECT * FROM ingredients WHERE name LIKE '%" + input + "%';";
 			}
 
-        	ResultSet result = statement.executeQuery(query);
+			ResultSet result = statement.executeQuery(query);
 
 			while (result.next()) {
 				String quantity = result.getString("quantity");

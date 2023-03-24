@@ -5,16 +5,24 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+/**
+ * Used to display the excess reprot gui option and will calculate the report
+ * depending on the start/end date that is provided
+ */
 public class ExcessReportGui extends JFrame {
 
     private LabeledFieldPanel startDateFieldPanel;
     private LabeledFieldPanel endDateFieldPanel;
-    
+
+    /**
+     * 
+     * @param managerGui goes back to the managerGUI when closed
+     */
     public ExcessReportGui(ManagerGui managerGui) {
         setSize(400, 200);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        
+
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
@@ -43,7 +51,7 @@ public class ExcessReportGui extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String startDate = startDateFieldPanel.fieldBox.getText();
                 String endDate = endDateFieldPanel.fieldBox.getText();
-                
+
                 ExcessInventoryGui gui = new ExcessInventoryGui(self, startDate, endDate);
 
                 gui.setVisible(true);
@@ -53,10 +61,10 @@ public class ExcessReportGui extends JFrame {
 
         topPanel.add(generateButton);
 
-		mainPanel.add(topPanel, BorderLayout.NORTH);
-		mainPanel.add(startDateFieldPanel);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(startDateFieldPanel);
         mainPanel.add(endDateFieldPanel);
 
-        add(mainPanel);   
+        add(mainPanel);
     }
 }

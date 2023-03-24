@@ -5,14 +5,25 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+/**
+ * Allows the manager to edit the ingredients and its amount within the
+ * inventory
+ */
 public class EditIngredientGui extends JFrame {
+
 	private String productId;
 
 	UpdateInventoryGui updateInventoryGui;
 	LabeledFieldPanel nameLabeledFieldPanel;
 	LabeledFieldPanel quantityLabeledFieldPanel;
-	
-    public EditIngredientGui(UpdateInventoryGui uig, String name, String prod_id, Boolean makeNew) {
+
+	/**
+	 * @param uig     gui for the update inventory panel
+	 * @param name    name of the product
+	 * @param prod_id id of the product
+	 * @param makeNew if a new product was made
+	 */
+	public EditIngredientGui(UpdateInventoryGui uig, String name, String prod_id, Boolean makeNew) {
 		try {
 			productId = prod_id;
 			updateInventoryGui = uig;
@@ -26,7 +37,7 @@ public class EditIngredientGui extends JFrame {
 			setSize(400, 200);
 			setLocationRelativeTo(null);
 			setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-			
+
 			addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent e) {
 					setVisible(false);
@@ -34,7 +45,7 @@ public class EditIngredientGui extends JFrame {
 					updateInventoryGui.setVisible(true);
 				}
 			});
-			
+
 			JPanel mainPanel = new JPanel();
 			mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 			mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -49,7 +60,7 @@ public class EditIngredientGui extends JFrame {
 					if (!makeNew) {
 						saveUpdates();
 					} else {
-						try {	
+						try {
 							Connection conn = DatabaseUtil.makeConnection();
 
 							productId = Integer.toString(DatabaseUtil.generateTableId(conn, "ingredients"));
@@ -57,11 +68,11 @@ public class EditIngredientGui extends JFrame {
 							DatabaseUtil.closeConnection(conn);
 
 							saveUpdates();
-						} catch(Exception exc) {
+						} catch (Exception exc) {
 							JOptionPane.showMessageDialog(null, "Error accessing Database: " + e.toString());
 						}
 					}
-					
+
 				}
 			});
 			topPanel.add(saveButton, BorderLayout.WEST);
@@ -71,20 +82,21 @@ public class EditIngredientGui extends JFrame {
 
 				removeButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete " + name, "Confirmation", JOptionPane.YES_NO_OPTION);
+						int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete " + name,
+								"Confirmation", JOptionPane.YES_NO_OPTION);
 
 						if (result != JOptionPane.YES_OPTION) {
 							return;
-						}		
+						}
 
-						try {	
+						try {
 							Connection conn = DatabaseUtil.makeConnection();
 							Statement statement = conn.createStatement();
 
 							statement.executeUpdate("DELETE FROM ingredients WHERE id = " + productId + ";");
 
 							DatabaseUtil.closeConnection(conn);
-						} catch(Exception exc) {
+						} catch (Exception exc) {
 							JOptionPane.showMessageDialog(null, "Error accessing Database: " + e.toString());
 						}
 
@@ -99,8 +111,9 @@ public class EditIngredientGui extends JFrame {
 
 			Connection conn = DatabaseUtil.makeConnection();
 			Statement statement = conn.createStatement();
-        	ResultSet result = statement.executeQuery("SELECT * FROM ingredients WHERE id = " + productId + " LIMIT 1;");
-			
+			ResultSet result = statement
+					.executeQuery("SELECT * FROM ingredients WHERE id = " + productId + " LIMIT 1;");
+
 			result.next();
 
 			nameLabeledFieldPanel = new LabeledFieldPanel("Name", name);
@@ -114,27 +127,38 @@ public class EditIngredientGui extends JFrame {
 
 			DatabaseUtil.closeConnection(conn);
 
-		} catch(Exception e) {
+		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Error accessing Database: " + e.toString());
 		}
-    }
+	}
 
+	/**
+	 * Saves the update for the ingredient that was inserted
+	 */
 	public void saveUpdates() {
+		/*
+		 * Saves update by making connection and inserted the inputed ingredient within
+		 * the database
+		 */
 		try {
 			Connection conn = DatabaseUtil.makeConnection();
 
 			conn.createStatement().executeUpdate("DELETE FROM ingredients WHERE id = " + productId + ";");
-			conn.createStatement().executeUpdate("INSERT INTO ingredients (id, name, quantity) VALUES (" + productId + ", '" + nameLabeledFieldPanel.fieldBox.getText() + "', " + Integer.parseInt(quantityLabeledFieldPanel.fieldBox.getText()) + ");");
-			conn.createStatement().executeUpdate("INSERT INTO restock_threshold (ingredient_id, quantity) VALUES (" + productId + ", 1000);");
-			
+			conn.createStatement()
+					.executeUpdate("INSERT INTO ingredients (id, name, quantity) VALUES (" + productId + ", '"
+							+ nameLabeledFieldPanel.fieldBox.getText() + "', "
+							+ Integer.parseInt(quantityLabeledFieldPanel.fieldBox.getText()) + ");");
+			conn.createStatement().executeUpdate(
+					"INSERT INTO restock_threshold (ingredient_id, quantity) VALUES (" + productId + ", 1000);");
+
 			DatabaseUtil.closeConnection(conn);
 
-		} catch(Exception e) {
+		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Error accessing Database: " + e.toString());
 		}
 
 		dispose();
 		updateInventoryGui.filter();
-		updateInventoryGui.setVisible(true);	
+		updateInventoryGui.setVisible(true);
 	}
 }

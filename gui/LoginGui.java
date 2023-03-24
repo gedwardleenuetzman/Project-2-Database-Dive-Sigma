@@ -1,13 +1,16 @@
 import javax.swing.*;
 import java.awt.event.*;
 
+/**
+ * Extend the LoginGui to ask for the server or manager sides
+ */
 public class LoginGui extends JFrame {
     public LoginGui() {
         setTitle("Chick Fi La Login");
 
         ServerGui serverGui = new ServerGui(this);
         ManagerGui managerGui = new ManagerGui(this);
-        
+
         setSize(275, 100);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -16,8 +19,8 @@ public class LoginGui extends JFrame {
         JButton loginButton = new JButton("Login");
 
         loginButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String input = inputBox.getText();
+            public void actionPerformed(ActionEvent e) {
+                String input = inputBox.getText();
 
                 if (input.equals("server")) {
                     setVisible(false);
@@ -29,7 +32,7 @@ public class LoginGui extends JFrame {
                     JOptionPane.showMessageDialog(null, "Login failed.");
                 }
             }
-		});
+        });
 
         JPanel panel = new JPanel();
 

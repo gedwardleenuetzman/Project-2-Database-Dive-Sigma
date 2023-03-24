@@ -7,29 +7,33 @@ import javax.swing.border.*;
 
 import java.util.HashMap;
 
+/**
+ * Will allow the user to update the inventory values of each
+ * of the ingredients. Allows for an ingredient to be added as well.
+ */
 public class UpdateInventoryGui extends JFrame {
 	private SearchPanel searchPanel;
 	private ScrollPanel contentPanel;
 
 	private HashMap<Integer, HashMap<Integer, Integer>> ingredientMap;
 
-	//private EditProductGui currentEditProductGui;
+	// private EditProductGui currentEditProductGui;
 
-    public UpdateInventoryGui(ManagerGui managerGui) {
+	public UpdateInventoryGui(ManagerGui managerGui) {
 		setTitle("Chick-fi-la Manager - Update Menu");
 
 		ingredientMap = new HashMap<Integer, HashMap<Integer, Integer>>();
 
 		setSize(500, 500);
 		setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                setVisible(false);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				setVisible(false);
 				managerGui.setVisible(true);
-            }
-        });
+			}
+		});
 
 		JPanel mainPanel = new JPanel();
 		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -46,7 +50,7 @@ public class UpdateInventoryGui extends JFrame {
 			}
 		});
 
-        contentPanel = new ScrollPanel();
+		contentPanel = new ScrollPanel();
 
 		mainPanel.add(topPanel, BorderLayout.NORTH);
 		mainPanel.add(searchPanel, BorderLayout.NORTH);
@@ -68,7 +72,7 @@ public class UpdateInventoryGui extends JFrame {
 		add(mainPanel);
 
 		filter();
-    }
+	}
 
 	public void filter() {
 		try {
@@ -91,7 +95,7 @@ public class UpdateInventoryGui extends JFrame {
 				query = "SELECT * FROM ingredients WHERE name LIKE '%" + input + "%';";
 			}
 
-        	ResultSet result = statement.executeQuery(query);
+			ResultSet result = statement.executeQuery(query);
 			UpdateInventoryGui self = this;
 
 			while (result.next()) {

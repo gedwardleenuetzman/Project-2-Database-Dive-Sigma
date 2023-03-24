@@ -1,10 +1,15 @@
 import java.awt.event.*;
 import javax.swing.*;
 
+/**
+ * Provides all the options that can be done on the managers side of the POS
+ * system
+ */
 public class ManagerGui extends JFrame implements ActionListener {
+
     // Buttons
-	private JButton updateMenuButton;
-	private JButton updateInventoryButton;
+    private JButton updateMenuButton;
+    private JButton updateInventoryButton;
     private JButton xReportButton;
     private JButton zReportButton;
     private JButton salesReportButton;
@@ -14,12 +19,16 @@ public class ManagerGui extends JFrame implements ActionListener {
     // Setting Class Variables
     private UpdateInventoryGui updateInventoryGui;
     private UpdateMenuGui updateMenuGui;
-    
+
     private SalesReportGui salesReportGui;
     private ExcessReportGui excessReportGui;
 
+    /**
+     * 
+     * @param loginGui Goes back to the login gui if x is pressed
+     */
     public ManagerGui(LoginGui loginGui) {
-		super("Chick-fi-la Manager");
+        super("Chick-fi-la Manager");
 
         updateInventoryGui = new UpdateInventoryGui(this);
         updateMenuGui = new UpdateMenuGui(this);
@@ -29,7 +38,7 @@ public class ManagerGui extends JFrame implements ActionListener {
         setSize(300, 300);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        
+
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
@@ -38,12 +47,11 @@ public class ManagerGui extends JFrame implements ActionListener {
         });
 
         updateInventoryButton = new JButton("Update Inventory");
-		updateMenuButton = new JButton("Update Menu");
+        updateMenuButton = new JButton("Update Menu");
         xReportButton = new JButton("View X Report");
         zReportButton = new JButton("View Z Report");
-        
-		
-		salesReportButton = new JButton("Sales Report");
+
+        salesReportButton = new JButton("Sales Report");
         excessReportButton = new JButton("Excess Report");
         restockReportButton = new JButton("Restock Report");
 
@@ -68,8 +76,14 @@ public class ManagerGui extends JFrame implements ActionListener {
         restockReportButton.addActionListener(this);
     }
 
+    /**
+     * @param e
+     */
     // if button is pressed
     public void actionPerformed(ActionEvent e) {
+        /**
+         * Will generate new x and z reports, all others are ran once and done
+         */
         if (e.getSource() == updateInventoryButton) {
             setVisible(false);
             updateInventoryGui.setVisible(true);
@@ -83,7 +97,7 @@ public class ManagerGui extends JFrame implements ActionListener {
 
         } else if (e.getSource() == xReportButton) {
             setVisible(false);
-            
+
             XReportGui gui = new XReportGui(this);
             gui.setVisible(true);
 
@@ -95,7 +109,7 @@ public class ManagerGui extends JFrame implements ActionListener {
             excessReportGui.setVisible(true);
         } else if (e.getSource() == restockReportButton) {
             setVisible(false);
-            
+
             RestockReportGui gui = new RestockReportGui(this);
             gui.setVisible(true);
         }

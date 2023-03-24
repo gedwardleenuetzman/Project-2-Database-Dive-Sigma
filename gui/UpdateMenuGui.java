@@ -7,29 +7,32 @@ import javax.swing.border.*;
 
 import java.util.HashMap;
 
+/**
+ * Allows the menu to be updated with new products.
+ */
 public class UpdateMenuGui extends JFrame {
 	private SearchPanel searchPanel;
 	private ScrollPanel contentPanel;
 
 	private HashMap<Integer, HashMap<Integer, Integer>> ingredientMap;
 
-	//private EditProductGui currentEditProductGui;
+	// private EditProductGui currentEditProductGui;
 
-    public UpdateMenuGui(ManagerGui managerGui) {
+	public UpdateMenuGui(ManagerGui managerGui) {
 		setTitle("Chick-fi-la Manager - Update Menu");
 
 		ingredientMap = new HashMap<Integer, HashMap<Integer, Integer>>();
 
 		setSize(500, 500);
 		setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                setVisible(false);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				setVisible(false);
 				managerGui.setVisible(true);
-            }
-        });
+			}
+		});
 
 		JPanel mainPanel = new JPanel();
 		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -46,7 +49,7 @@ public class UpdateMenuGui extends JFrame {
 			}
 		});
 
-        contentPanel = new ScrollPanel();
+		contentPanel = new ScrollPanel();
 
 		mainPanel.add(topPanel, BorderLayout.NORTH);
 		mainPanel.add(searchPanel, BorderLayout.NORTH);
@@ -66,9 +69,9 @@ public class UpdateMenuGui extends JFrame {
 
 		topPanel.add(createButton);
 		add(mainPanel);
-		
+
 		filter();
-    }
+	}
 
 	public void filter() {
 		try {
@@ -91,7 +94,7 @@ public class UpdateMenuGui extends JFrame {
 				query = "SELECT * FROM products_cfa WHERE name LIKE '%" + input + "%';";
 			}
 
-        	ResultSet result = statement.executeQuery(query);
+			ResultSet result = statement.executeQuery(query);
 			UpdateMenuGui self = this;
 
 			while (result.next()) {

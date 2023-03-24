@@ -7,16 +7,19 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+/**
+ * SalesReportGui that provides the report for the all sales
+ */
 public class SalesReportGui extends JFrame {
-    
+
     private LabeledFieldPanel startDateFieldPanel;
     private LabeledFieldPanel endDateFieldPanel;
-    
+
     public SalesReportGui(ManagerGui managerGui) {
         setSize(400, 200);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        
+
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
@@ -45,7 +48,7 @@ public class SalesReportGui extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String startDate = startDateFieldPanel.fieldBox.getText();
                 String endDate = endDateFieldPanel.fieldBox.getText();
-                
+
                 RangedSalesGui gui = new RangedSalesGui(self, startDate, endDate);
 
                 gui.setVisible(true);
@@ -55,10 +58,10 @@ public class SalesReportGui extends JFrame {
 
         topPanel.add(generateButton);
 
-		mainPanel.add(topPanel, BorderLayout.NORTH);
-		mainPanel.add(startDateFieldPanel);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(startDateFieldPanel);
         mainPanel.add(endDateFieldPanel);
 
-        add(mainPanel);   
+        add(mainPanel);
     }
 }

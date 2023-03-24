@@ -1,20 +1,23 @@
 import java.awt.event.*;
 import javax.swing.*;
 
+/**
+ * Gives the options that the server can do on the server side of the POS system
+ */
 public class ServerGui extends JFrame implements ActionListener {
-	private JButton placeOrderButton;
+    private JButton placeOrderButton;
 
     private PlaceOrderGui placeOrderGui;
-    
+
     public ServerGui(LoginGui loginGui) {
-		super("Chick-fi-la Server");
+        super("Chick-fi-la Server");
 
         placeOrderGui = new PlaceOrderGui(this);
-        
+
         setSize(300, 300);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        
+
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
@@ -33,6 +36,9 @@ public class ServerGui extends JFrame implements ActionListener {
         placeOrderButton.addActionListener(this);
     }
 
+    /**
+     * @param e
+     */
     // if button is pressed
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == placeOrderButton) {

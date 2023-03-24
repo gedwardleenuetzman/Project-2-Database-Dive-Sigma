@@ -8,7 +8,12 @@ import javax.swing.border.*;
 
 import java.util.HashMap;
 
+/**
+ * Allows the server to place the order, giving access to all of the items on
+ * the menu
+ */
 public class PlaceOrderGui extends JFrame {
+
 	private HashMap<String, JTextField> inputMap;
 
 	private ScrollPanel scrollPanel;
@@ -18,11 +23,15 @@ public class PlaceOrderGui extends JFrame {
 		for (String productId : inputMap.keySet()) {
 			JTextField inputBox = inputMap.get(productId);
 
-			inputBox.setText("0");			
+			inputBox.setText("0");
 		}
 	}
 
-    public PlaceOrderGui(ServerGui sg) {
+	/**
+	 * 
+	 * @param sg
+	 */
+	public PlaceOrderGui(ServerGui sg) {
 		try {
 			serverGui = sg;
 
@@ -33,14 +42,14 @@ public class PlaceOrderGui extends JFrame {
 			setSize(400, 400);
 			setLocationRelativeTo(null);
 			setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-			
+
 			addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent e) {
 					setVisible(false);
 					serverGui.setVisible(true);
 				}
 			});
-			
+
 			JPanel mainPanel = new JPanel();
 			mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 			mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -60,17 +69,17 @@ public class PlaceOrderGui extends JFrame {
 
 			Connection conn = DatabaseUtil.makeConnection();
 			Statement statement = conn.createStatement();
-        	ResultSet result = statement.executeQuery("SELECT * FROM products_cfa");
-			
+			ResultSet result = statement.executeQuery("SELECT * FROM products_cfa");
+
 			scrollPanel = new ScrollPanel();
 
 			while (result.next()) {
 				LabeledFieldPanel label = new LabeledFieldPanel(result.getString("name"), "0");
-				
+
 				scrollPanel.add(label);
 				inputMap.put(result.getString("id"), label.fieldBox);
 			}
-			
+
 			mainPanel.add(topPanel, BorderLayout.NORTH);
 			mainPanel.add(scrollPanel.scrollPane, BorderLayout.CENTER);
 
@@ -78,11 +87,18 @@ public class PlaceOrderGui extends JFrame {
 
 			DatabaseUtil.closeConnection(conn);
 
-		} catch(Exception e) {
+		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Error accessing Database: " + e.toString());
 		}
-    }
+	}
 
+	/**
+	 * Place order places the order depneding on the inputs that are
+	 * provided to it and the quantities that are input by the server.
+	 * Will also update the tables so that the products, ingredients, and order
+	 * values are
+	 * all doing what they need to within the queries
+	 */
 	public void placeOrder() {
 		try {
 			Connection conn = DatabaseUtil.makeConnection();
@@ -94,24 +110,27 @@ public class PlaceOrderGui extends JFrame {
 				JTextField inputBox = inputMap.get(productId);
 				Integer quantity = Integer.parseInt(inputBox.getText());
 
-				ResultSet ingredients = conn.createStatement().executeQuery("SELECT * FROM product_ingredients WHERE prod_id = " + productId + ";");
+				ResultSet ingredients = conn.createStatement()
+						.executeQuery("SELECT * FROM product_ingredients WHERE prod_id = " + productId + ";");
 
 				while (ingredients.next()) {
 					String ingredientId = ingredients.getString("item_id");
 
 					if (using.get(ingredientId) != null) {
-						using.put(ingredientId, using.get(ingredientId) + (quantity * Integer.parseInt(ingredients.getString("quantity"))));
+						using.put(ingredientId, using.get(ingredientId)
+								+ (quantity * Integer.parseInt(ingredients.getString("quantity"))));
 					} else {
 						using.put(ingredientId, (quantity * Integer.parseInt(ingredients.getString("quantity"))));
 					}
-				}				
+				}
 			}
 
 			for (String ingredientId : using.keySet()) {
 				Integer quantity = using.get(ingredientId);
 
 				if (inv.get(ingredientId) < quantity) {
-					JOptionPane.showMessageDialog(null, "Unable to make order. Not enough " + id2name.get(ingredientId));
+					JOptionPane.showMessageDialog(null,
+							"Unable to make order. Not enough " + id2name.get(ingredientId));
 					return;
 				}
 			}
@@ -119,7 +138,8 @@ public class PlaceOrderGui extends JFrame {
 			// order can be made now so reduce inventory
 			for (String ingredientId : using.keySet()) {
 				Integer quantity = using.get(ingredientId);
-				conn.createStatement().executeUpdate("UPDATE ingredients SET quantity = quantity - " + quantity + " WHERE id = " + ingredientId);
+				conn.createStatement().executeUpdate(
+						"UPDATE ingredients SET quantity = quantity - " + quantity + " WHERE id = " + ingredientId);
 			}
 
 			// update order tables
@@ -136,19 +156,24 @@ public class PlaceOrderGui extends JFrame {
 					Integer quantity = Integer.parseInt(inputBox.getText());
 
 					if (quantity > 0) {
-						ResultSet product_info = conn.createStatement().executeQuery("SELECT * FROM products_cfa WHERE id = " + productId + " LIMIT 1;");
+						ResultSet product_info = conn.createStatement()
+								.executeQuery("SELECT * FROM products_cfa WHERE id = " + productId + " LIMIT 1;");
 
 						product_info.next();
 
 						total += (product_info.getDouble("price") * quantity);
-						
-						conn.createStatement().executeUpdate("INSERT INTO order_products VALUES (" + id + ", " + productId + ", " + quantity + ");");
-						conn.createStatement().executeUpdate("INSERT INTO daily_order_products VALUES (" + id + ", " + productId + ", " + quantity + ");");
+
+						conn.createStatement().executeUpdate(
+								"INSERT INTO order_products VALUES (" + id + ", " + productId + ", " + quantity + ");");
+						conn.createStatement().executeUpdate("INSERT INTO daily_order_products VALUES (" + id + ", "
+								+ productId + ", " + quantity + ");");
 					}
 				}
 
-				conn.createStatement().executeUpdate("INSERT INTO orders VALUES (" + id + ", " + Double.toString(total) + ");");
-				conn.createStatement().executeUpdate("INSERT INTO daily_orders VALUES (" + id + ", " + Double.toString(total) + ");");
+				conn.createStatement()
+						.executeUpdate("INSERT INTO orders VALUES (" + id + ", " + Double.toString(total) + ");");
+				conn.createStatement()
+						.executeUpdate("INSERT INTO daily_orders VALUES (" + id + ", " + Double.toString(total) + ");");
 
 				String sql1 = "UPDATE orders SET time = ? WHERE id = " + id + ";";
 				String sql2 = "UPDATE daily_orders SET time = ? WHERE id = " + id + ";";
@@ -163,12 +188,11 @@ public class PlaceOrderGui extends JFrame {
 				pstmt2.setTimestamp(1, timestamp);
 				pstmt2.executeUpdate();
 			}
-			
 
 			DatabaseUtil.closeConnection(conn);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Error accessing Database: " + e.toString());
-				e.printStackTrace();
+			e.printStackTrace();
 			System.out.println(e.getClass().getName() + ": " + e.getMessage());
 
 		}
